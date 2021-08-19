@@ -478,14 +478,10 @@ int DnsLookup::generate_dns_request(int dnsType, const char *hostname, unsigned 
 static int get_offset(unsigned char *p)
 {
     //偏移量
-    if (p[0] & 0xC0)
+    if ((p[0] & 0xC0) == 0xC0)
     {
         //eg: 偏移量0xC0 0C: 1100 0000 0000 1100 最开始的两个bit为1，后14bit表示偏移量
-        int offsetH = p[0] & 0x3F;
-        int offsetL = p[1] & 0xFF;
-        
-        int offset = offsetH * 16 * 16 + offsetL;
-        return offset;
+        return (int)((p[0] & 0x3F) << 8 | p[1]);
     }
     return 0;
 }
